@@ -36,15 +36,8 @@ def main():
                 return
             elif event.type == KEYDOWN and event.key == K_ESCAPE:
                 return
-            elif event.type == KEYDOWN and event.key == K_DOWN:
-                print("...")
-            # elif event.type == KEYDOWN and event.key == K_UP:
-            #     return
-            # elif event.type == KEYDOWN and event.key == K_LEFT:
-            #     return
-            # elif event.type == KEYDOWN and event.key == K_RIGHT:
-            #     return
-
+            elif event.type == KEYDOWN:
+                car.handleKey(event.key)
 
         allsprites.update()
 
