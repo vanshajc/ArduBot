@@ -23,8 +23,8 @@ def main():
     screen.blit(background, (0, 0))
     pygame.display.flip()
 
-    fist = Fist()
-    allsprites = pygame.sprite.RenderPlain((fist))
+    car = Car()
+    allsprites = pygame.sprite.RenderPlain((car))
     clock = pygame.time.Clock()
 
     while 1:
@@ -34,10 +34,6 @@ def main():
                 return
             elif event.type == KEYDOWN and event.key == K_ESCAPE:
                 return
-            elif event.type == MOUSEBUTTONDOWN:
-                fist.punch()
-            elif event.type == MOUSEBUTTONUP:
-                fist.unpunch()
 
         allsprites.update()
 
