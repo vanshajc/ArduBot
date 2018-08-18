@@ -12,7 +12,7 @@ class Car(pygame.sprite.Sprite):
         self.original = self.image
 
         self.orientation = 0
-        self.forward_velocity = 1
+        self.forward_velocity = 5
         self.angular_velocity = 0.001
 
         self.pose = (100, 450)
@@ -22,15 +22,15 @@ class Car(pygame.sprite.Sprite):
         self.area = screen.get_rect()
 
     def update(self):
-        move = (self.forward_velocity * math.sin(self.orientation),
+        move = (-1*self.forward_velocity * math.sin(self.orientation),
                 self.forward_velocity * math.cos(self.orientation))
 
-        print(self.orientation, math.cos(self.orientation), math.sin(self.orientation))
+        # print(to_degrees(self.orientation), move[0], move[1], round(move[0]), round(move[1]))
 
-        new_pose = self.rect.move(move[0], -1*move[1])
+        new_pose = self.rect.move(round(move[0]), round(-1*move[1]))
 
         if (new_pose[0] <= self.area.left or new_pose[0] >= self.area.right - 50) or \
-            (new_pose[1] < self.area.top or new_pose[1] > self.area.bottom):
+            (new_pose[1] <= self.area.top or new_pose[1] >= self.area.bottom - 50):
             return
 
         self.pose = new_pose
@@ -39,7 +39,7 @@ class Car(pygame.sprite.Sprite):
     def rotate(self, angle):
         center = self.rect.center
         self.orientation += angle
-        self.image = pygame.transform.rotate(self.original, self.orientation)
+        self.image = pygame.transform.rotate(self.original, to_degrees(self.orientation))
         self.rect = self.image.get_rect(center=center)
 
     def handle_key(self, key):
