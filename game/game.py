@@ -37,7 +37,7 @@ def main():
             elif event.type == KEYDOWN and event.key == K_ESCAPE:
                 return
             elif event.type == KEYDOWN:
-                car.handleKey(event.key)
+                car.handle_key(event.key)
 
         allsprites.update()
 
