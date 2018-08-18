@@ -30,11 +30,21 @@ def main():
         clock.tick(60)
         scoretext = myfont.render("Score {0}".format(score), 1, (0, 0, 0))
         screen.blit(scoretext, (5, 10))
+
         for event in pygame.event.get():
             if event.type == QUIT:
                 return
             elif event.type == KEYDOWN and event.key == K_ESCAPE:
                 return
+            elif event.type == KEYDOWN and event.key == K_DOWN:
+                print("...")
+            # elif event.type == KEYDOWN and event.key == K_UP:
+            #     return
+            # elif event.type == KEYDOWN and event.key == K_LEFT:
+            #     return
+            # elif event.type == KEYDOWN and event.key == K_RIGHT:
+            #     return
+
 
         allsprites.update()
 
