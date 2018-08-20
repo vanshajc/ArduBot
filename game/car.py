@@ -43,10 +43,10 @@ class Car(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center=center)
 
     def handle_key(self, key):
-        if key == K_DOWN:
-            self.forward_velocity -= 1
-        if key == K_UP:
-            self.forward_velocity += 1
+        # if key == K_DOWN:
+        #     self.forward_velocity -= 1
+        # if key == K_UP:
+        #     self.forward_velocity += 1
         if key == K_LEFT:
             self.rotate(math.pi/6)
         if key == K_RIGHT:

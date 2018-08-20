@@ -1,13 +1,13 @@
 #!/usr/local/bin/python3
-import os, sys
 import pygame
 from pygame.locals import *
-from car import *
+from paddle import *
 
 pygame.font.init()
 myfont = pygame.font.SysFont("arial", 16)
 size = width, height = 800,500
 score = 0
+
 
 def main():
     pygame.init()
