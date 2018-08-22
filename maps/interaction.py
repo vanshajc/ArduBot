@@ -3,7 +3,6 @@ from tile_Class import Tile
 
 WALLS =[]
 
-
 def interaction(SCREEN):
 
     Mpos = pygame.mouse.get_pos() # [x, y] 
@@ -15,14 +14,17 @@ def interaction(SCREEN):
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if event.button == 1:
+        if event.type == pygame.MOUSEBUTTONDOWN or pygame.mouse.get_pressed()[0]:
+            print(pygame.mouse.get_pressed())
+
+            if pygame.mouse.get_pressed()[0] or event.button == 1:
                 for tile in Tile.List:
-                    if abs(tile.x - Mpos[0]) <= 15 and abs(tile.y - Mpos[1]) <= 15:
+                    if abs(tile.x - Mpos[0]) < 32 and abs(tile.y - Mpos[1]) < 32:
                         tile.type = 'solid'
-                        WALLS.append(tileNumber)
+                        if tileNumber not in WALLS:
+                            WALLS.append(tileNumber)
                         break
-            if event.button == 3: # 1 = LEFT
+            elif pygame.mouse.get_pressed()[2] or event.button == 3: # 1 = LEFT
                 tile = Tile.get_tile(tileNumber)
                 if tileNumber in WALLS:
                     tile.type = 'empty'
