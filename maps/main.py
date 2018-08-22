@@ -11,7 +11,7 @@ from interaction import interaction
 
 pygame.init()
 pygame.font.init()
-SCREEN = pygame.display.set_mode((800, 500)) # 40 x 30
+SCREEN = pygame.display.set_mode((1280, 960)) # 40 x 30
 Tile.pre_init(SCREEN)
 CLOCK = pygame.time.Clock()
 FPS = 20
