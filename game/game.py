@@ -1,11 +1,13 @@
 #!/usr/local/bin/python3
 import pygame
 from pygame.locals import *
-from paddle import *
+from obstacle_map import *
+from tile_Class import Tile
+from car import Car
 
 pygame.font.init()
 myfont = pygame.font.SysFont("arial", 16)
-size = width, height = 800,500
+size = width, height = 1280,960
 score = 0
 
 
@@ -22,12 +24,16 @@ def main():
     screen.blit(background, (0, 0))
     pygame.display.flip()
 
+    Tile.pre_init(screen)
+    Tile.load(obstacles())
+
     car = Car()
     allsprites = pygame.sprite.RenderPlain((car))
     clock = pygame.time.Clock()
 
     while 1:
         clock.tick(30)
+
         scoretext = myfont.render("Score {0}".format(score), 1, (0, 0, 0))
         screen.blit(scoretext, (5, 10))
 
@@ -44,6 +50,7 @@ def main():
         # Draw Everything
         screen.blit(background, (0, 0))
         allsprites.draw(screen)
+        Tile.draw_tiles(screen)
         pygame.display.flip()
 
     pygame.quit()

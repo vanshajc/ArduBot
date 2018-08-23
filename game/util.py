@@ -19,3 +19,4 @@ def load_image(name, color_key=None):
 
 def to_degrees(rad):
     return rad*180/math.pi
+
