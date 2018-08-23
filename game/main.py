@@ -1,10 +1,11 @@
+#!/usr/local/bin/python3
 import pygame, sys, text_to_screen
 from tile_Class import Tile
 from interaction import interaction
 
 pygame.init()
 pygame.font.init()
-SCREEN = pygame.display.set_mode((1280, 960)) # 40 x 30
+SCREEN = pygame.display.set_mode((640, 480)) # 40 x 30
 Tile.pre_init(SCREEN)
 CLOCK = pygame.time.Clock()
 FPS = 20

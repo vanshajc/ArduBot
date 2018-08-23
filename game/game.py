@@ -7,7 +7,7 @@ from car import Car
 
 pygame.font.init()
 myfont = pygame.font.SysFont("arial", 16)
-size = width, height = 1280,960
+size = width, height = 640, 480
 score = 0
 
 
@@ -21,7 +21,9 @@ def main():
     background = background.convert()
     background.fill((250, 250, 250))
 
-    screen.blit(background, (0, 0))
+    bg = pygame.image.load("../images/map1.png")
+
+    screen.blit(bg, (0, 0))
     pygame.display.flip()
 
     Tile.pre_init(screen)
@@ -37,6 +39,15 @@ def main():
         scoretext = myfont.render("Score {0}".format(score), 1, (0, 0, 0))
         screen.blit(scoretext, (5, 10))
 
+
+
+        if Tile.collides(car.pose[0], car.pose[1]):
+            print(car.pose[0], car.pose[1], Tile.to_tile_number(car.pose[0], car.pose[1]), car.rect.center)
+            print(car.image.get_width(), car.image.get_height())
+            print("!!!!")
+            #break
+
+
         for event in pygame.event.get():
             if event.type == QUIT:
                 return
@@ -45,12 +56,19 @@ def main():
             elif event.type == KEYDOWN:
                 car.handle_key(event.key)
 
-        allsprites.update()
+        if (pygame.key.get_pressed()[pygame.K_RIGHT]):
+            car.handle_key(pygame.K_RIGHT)
+        if (pygame.key.get_pressed()[pygame.K_LEFT]):
+            car.handle_key(pygame.K_LEFT)
 
+        allsprites.update()
         # Draw Everything
-        screen.blit(background, (0, 0))
+
+        screen.blit(bg, (0,0))
+
         allsprites.draw(screen)
-        Tile.draw_tiles(screen)
+        pygame.draw.rect(screen, (255, 0, 0), car.rect, 1)
+        #Tile.draw_tiles(screen)
         pygame.display.flip()
 
     pygame.quit()
