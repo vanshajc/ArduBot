@@ -21,7 +21,7 @@ def main():
     background = background.convert()
     background.fill((250, 250, 250))
 
-    bg = pygame.image.load("../images/map1.png")
+    bg = pygame.image.load("../../images/map1.png")
 
     screen.blit(bg, (0, 0))
     pygame.display.flip()

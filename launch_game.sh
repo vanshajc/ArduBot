@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
-cd game
+cd src/game
 ./game.py

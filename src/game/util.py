@@ -5,7 +5,7 @@ import math
 
 
 def load_image(name, color_key=None):
-    fullname = os.path.join('../images', name)
+    fullname = os.path.join('../../images', name)
 
     image = pygame.image.load(fullname)
 
