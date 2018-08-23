@@ -12,10 +12,10 @@ class Car(pygame.sprite.Sprite):
         self.original = self.image
 
         self.orientation = 0
-        self.forward_velocity = 5
+        self.forward_velocity = 2
         self.angular_velocity = 0.001
 
-        self.pose = (100, 450)
+        self.pose = (100, 200)
         self.rect.center = self.pose
 
         screen = pygame.display.get_surface()
@@ -48,7 +48,7 @@ class Car(pygame.sprite.Sprite):
         # if key == K_UP:
         #     self.forward_velocity += 1
         if key == K_LEFT:
-            self.rotate(math.pi/6)
+            self.rotate(math.pi/120)
         if key == K_RIGHT:
-            self.rotate(-1*math.pi/6)
+            self.rotate(-1*math.pi/120)
 
