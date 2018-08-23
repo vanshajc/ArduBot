@@ -1,6 +1,6 @@
 #!/usr/local/bin/python3
 import pygame, sys, text_to_screen
-from tile_Class import Tile
+from Tile import Tile
 from interaction import interaction
 
 pygame.init()

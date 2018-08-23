@@ -2,7 +2,7 @@
 import pygame
 from pygame.locals import *
 from obstacle_map import *
-from tile_Class import Tile
+from Tile import Tile
 from car import Car
 
 pygame.font.init()
@@ -36,17 +36,13 @@ def main():
     while 1:
         clock.tick(60)
 
-        scoretext = myfont.render("Score {0}".format(score), 1, (0, 0, 0))
-        screen.blit(scoretext, (5, 10))
+        score_text = myfont.render("Score {0}".format(score), 1, (255, 255, 255))
 
-
-
-        if Tile.collides(car.pose[0], car.pose[1]):
+        if Tile.collides(car.rect.center[0], car.rect.center[1]):
             print(car.pose[0], car.pose[1], Tile.to_tile_number(car.pose[0], car.pose[1]), car.rect.center)
             print(car.image.get_width(), car.image.get_height())
-            print("!!!!")
-            #break
-
+            print("!!!! Collision !!!!")
+            break
 
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -56,19 +52,18 @@ def main():
             elif event.type == KEYDOWN:
                 car.handle_key(event.key)
 
-        if (pygame.key.get_pressed()[pygame.K_RIGHT]):
+        if pygame.key.get_pressed()[pygame.K_RIGHT]:
             car.handle_key(pygame.K_RIGHT)
-        if (pygame.key.get_pressed()[pygame.K_LEFT]):
+        if pygame.key.get_pressed()[pygame.K_LEFT]:
             car.handle_key(pygame.K_LEFT)
 
         allsprites.update()
+
         # Draw Everything
-
         screen.blit(bg, (0,0))
-
+        screen.blit(score_text, (5, 10))
         allsprites.draw(screen)
         pygame.draw.rect(screen, (255, 0, 0), car.rect, 1)
-        #Tile.draw_tiles(screen)
         pygame.display.flip()
 
     pygame.quit()

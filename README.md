@@ -1,8 +1,8 @@
 # ArduBot
 
 #### **Description**  
-The goal of this project is to teach a robot running on an Arduino to learn to driver around an environment by itself. 
-This is done by training the robot using deep reinforcement learning to avoid obstacles. 
+The goal of this project is to teach a robot running on an Arduino to learn to drive around an environment by itself. 
+This will be done by training the robot in simulation with deep reinforcement learning, penalizing on hitting obstacles and rewarding for distance traveled.
 
 Currently, the simulation is being developed.
 
