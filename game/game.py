@@ -32,7 +32,7 @@ def main():
     clock = pygame.time.Clock()
 
     while 1:
-        clock.tick(30)
+        clock.tick(60)
 
         scoretext = myfont.render("Score {0}".format(score), 1, (0, 0, 0))
         screen.blit(scoretext, (5, 10))
