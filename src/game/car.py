@@ -15,7 +15,7 @@ class Car(pygame.sprite.Sprite):
         self.forward_velocity = 2
         self.angular_velocity = 0.001
 
-        self.pose = (100, 200)
+        self.pose = (100, 250)
         self.rect.center = self.pose
 
         screen = pygame.display.get_surface()
@@ -33,8 +33,8 @@ class Car(pygame.sprite.Sprite):
             (new_pose[1] <= self.area.top or new_pose[1] >= self.area.bottom - 50):
             return
 
-        self.pose = new_pose
-        self.rect = self.pose
+        self.pose = new_pose.center
+        self.rect = new_pose
 
     def rotate(self, angle):
         center = self.rect.center

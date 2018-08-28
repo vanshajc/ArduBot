@@ -1,4 +1,6 @@
-import pygame, text_to_screen
+import pygame
+import text_to_screen
+# 088!7rT8OWqd
 
 
 class Tile(pygame.Rect):
@@ -28,10 +30,27 @@ class Tile(pygame.Rect):
         Tile.List[Tile.to_tile_number(x, y)] = self
 
     @staticmethod
+    def get_neighbors(tn, screen=None):
+        n = [tn,              tn - 1,              tn + 1,
+             tn - Tile.width, tn - Tile.width - 1, tn - Tile.width + 1,
+             tn + Tile.width, tn + Tile.width - 1, tn + Tile.width + 1]
+
+        ohe = []
+        for t in n:
+            ohe.append(Tile.get_type(t, screen))
+        return ohe
+
+    @staticmethod
+    def get_type(num, screen=None):
+        if num < 0 or num >= Tile.width * Tile.height:
+            return 1
+        Tile.List[num].draw_tile(screen)
+        return int(Tile.List[num].type == 'solid')
+
+    @staticmethod
     def get_tile(number):
-        for tile in Tile.List:
-            if tile.number == number:
-                return tile
+        if number in Tile.List:
+            return Tile.List[number]
 
     @staticmethod
     def collides(x, y):
@@ -46,8 +65,13 @@ class Tile(pygame.Rect):
     def draw_tiles(SCREEN):        
         for tile in Tile.List:
             if not(tile.type == 'empty'):
-                pygame.draw.line(SCREEN, [255, 0, 0], [tile.x, tile.y], [tile.x + tile.size, tile.y + tile.size])
-                pygame.draw.line(SCREEN, [255, 0, 0], [tile.x, tile.y + tile.size], [tile.x + tile.size, tile.y])
-                pygame.draw.rect(SCREEN, [40, 40, 40], tile)
-                text_to_screen.draw_Text(SCREEN, "", tile.x, tile.y + 8)
+                tile.draw_tile(SCREEN)
+
+    def draw_tile(self, SCREEN):
+        if SCREEN is None:
+            return
+        pygame.draw.line(SCREEN, [255, 0, 0], [self.x, self.y], [self.x + self.size, self.y + self.size])
+        pygame.draw.line(SCREEN, [255, 0, 0], [self.x, self.y + self.size], [self.x + self.size, self.y])
+        pygame.draw.rect(SCREEN, [40, 40, 40], self)
+        text_to_screen.draw_Text(SCREEN, "", self.x, self.y + 8)
 
