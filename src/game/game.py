@@ -44,26 +44,10 @@ def main():
         score = score + 1
 
         if Tile.collides(car.pose[0], car.pose[1]):
-            # print("Car Pose:", car.pose[0], car.pose[1], Tile.to_tile_number(car.pose[0], car.pose[1]))
-            # print(Tile.get_tile(Tile.to_tile_number(car.pose[0], car.pose[1])).type)
-            # print("!!!! Collision !!!!")
             break
 
         move = model.get_action(car.get_state())
         car.move(move)
-
-        for event in pygame.event.get():
-            if event.type == QUIT:
-                return
-            elif event.type == KEYDOWN and event.key == K_ESCAPE:
-                return
-            elif event.type == KEYDOWN:
-                car.handle_key(event.key)
-
-        if pygame.key.get_pressed()[pygame.K_RIGHT]:
-            car.handle_key(pygame.K_RIGHT)
-        if pygame.key.get_pressed()[pygame.K_LEFT]:
-            car.handle_key(pygame.K_LEFT)
 
         allsprites.update()
 
@@ -80,6 +64,21 @@ def main():
 
     print("Final Score: ", score)
     pygame.quit()
+
+
+def manual_mode(car):
+    for event in pygame.event.get():
+        if event.type == QUIT:
+            return
+        elif event.type == KEYDOWN and event.key == K_ESCAPE:
+            return
+        elif event.type == KEYDOWN:
+            car.handle_key(event.key)
+
+    if pygame.key.get_pressed()[pygame.K_RIGHT]:
+        car.handle_key(pygame.K_RIGHT)
+    if pygame.key.get_pressed()[pygame.K_LEFT]:
+        car.handle_key(pygame.K_LEFT)
 
 
 if __name__ == '__main__':
