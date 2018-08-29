@@ -1,14 +1,18 @@
 # ArduBot
 
 #### **Description**  
-The goal of this project is to teach a robot running on an Arduino to learn to drive around an environment by itself. 
-This will be done by training the robot in simulation with deep reinforcement learning, penalizing on hitting obstacles and rewarding for distance traveled.
+The goal of this project is to have a robot learn to drive around its environment by itself.
+This will be done with several different methods, and then compared to find the optimal solution.
 
-Currently, the simulation is being developed.
+### **Current State**
+The simulation is mostly complete. It has the bare minimum functionality needed in order to perform ML techniques.
+
+The genetic algorithm approach has been started and currently being worked on.
 
 #### **Dependencies**   
-Python3 (Tested on Python3.7)  
+Python 3.6
 Pygame
+Numpy
 
 #### **How to run:**  
 In order to run the simulation:  
