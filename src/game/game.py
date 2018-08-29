@@ -1,9 +1,11 @@
-#!/usr/local/bin/python3
+#!/usr/local/bin/python3.6
 import pygame
 from pygame.locals import *
 from obstacle_map import *
-from Tile import Tile
+from tile import Tile
 from car import Car
+from model import Model
+import numpy as np
 
 pygame.font.init()
 myfont = pygame.font.SysFont("arial", 16)
@@ -12,6 +14,7 @@ size = width, height = 640, 480
 
 def main():
     pygame.init()
+    np.random.seed()
     screen = pygame.display.set_mode((width, height))
     pygame.display.set_caption('ArduBot: Development Stage')
     pygame.mouse.set_visible(0)
@@ -29,6 +32,7 @@ def main():
     Tile.load(obstacles())
 
     car = Car()
+    model = Model()
     allsprites = pygame.sprite.RenderPlain((car))
     clock = pygame.time.Clock()
 
@@ -40,10 +44,13 @@ def main():
         score = score + 1
 
         if Tile.collides(car.pose[0], car.pose[1]):
-            print("Car Pose:", car.pose[0], car.pose[1], Tile.to_tile_number(car.pose[0], car.pose[1]))
-            print(Tile.get_tile(Tile.to_tile_number(car.pose[0], car.pose[1])).type)
-            print("!!!! Collision !!!!")
-            continue
+            # print("Car Pose:", car.pose[0], car.pose[1], Tile.to_tile_number(car.pose[0], car.pose[1]))
+            # print(Tile.get_tile(Tile.to_tile_number(car.pose[0], car.pose[1])).type)
+            # print("!!!! Collision !!!!")
+            break
+
+        move = model.get_action(car.get_state())
+        car.move(move)
 
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -60,16 +67,18 @@ def main():
 
         allsprites.update()
 
-
         # Draw Everything
         screen.blit(bg, (0,0))
-        print(Tile.get_neighbors(Tile.to_tile_number(car.pose[0], car.pose[1]), screen))
+
+        Tile.get_neighbors(Tile.to_tile_number(car.pose[0], car.pose[1]), screen)
+
         score_text = myfont.render("Score {0}".format(score), 1, (255, 255, 255))
         screen.blit(score_text, (5, 10))
         allsprites.draw(screen)
         pygame.draw.rect(screen, (255, 0, 0), car.rect, 1)
         pygame.display.flip()
 
+    print("Final Score: ", score)
     pygame.quit()
 
 

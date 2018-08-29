@@ -1,5 +1,5 @@
 import pygame, sys
-from Tile import Tile
+from tile import Tile
 
 WALLS =[]
 

@@ -31,18 +31,22 @@ class Tile(pygame.Rect):
 
     @staticmethod
     def get_neighbors(tn, screen=None):
-        n = [tn,              tn - 1,              tn + 1,
-             tn - Tile.width, tn - Tile.width - 1, tn - Tile.width + 1,
-             tn + Tile.width, tn + Tile.width - 1, tn + Tile.width + 1]
+        n = []
+
+        matrix_size = 2
+        for h in range(-1*matrix_size, matrix_size + 1):
+            for v in range(-1*matrix_size, matrix_size + 1):
+                n.append(tn + h + v*Tile.width)
 
         ohe = []
+
         for t in n:
             ohe.append(Tile.get_type(t, screen))
         return ohe
 
     @staticmethod
     def get_type(num, screen=None):
-        if num < 0 or num >= Tile.width * Tile.height:
+        if num <= 0 or num >= Tile.width * Tile.height:
             return 1
         Tile.List[num].draw_tile(screen)
         return int(Tile.List[num].type == 'solid')
@@ -72,6 +76,6 @@ class Tile(pygame.Rect):
             return
         pygame.draw.line(SCREEN, [255, 0, 0], [self.x, self.y], [self.x + self.size, self.y + self.size])
         pygame.draw.line(SCREEN, [255, 0, 0], [self.x, self.y + self.size], [self.x + self.size, self.y])
-        pygame.draw.rect(SCREEN, [40, 40, 40], self)
+        # pygame.draw.rect(SCREEN, [200, 200, 200, 255], self)
         text_to_screen.draw_Text(SCREEN, "", self.x, self.y + 8)
 
