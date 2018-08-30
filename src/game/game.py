@@ -12,7 +12,10 @@ import json
 pygame.font.init()
 myfont = pygame.font.SysFont("arial", 16)
 size = width, height = 640, 480
+
+# Number of cars to train at the same time
 max_players = 10
+
 
 def load_players(num_players):
     cars = []
@@ -110,15 +113,11 @@ def main():
     pygame.display.set_caption('ArduBot: Development Stage')
     pygame.mouse.set_visible(0)
 
-    # Load initial players
-    cars, models, allsprites, scores = [], [], [], []
 
     # Run trials
     for i in range(0, 10):
         # One trial run on a set of cars and their models
-        if len(cars) < max_players:
-            cars, models, allsprites, scores = fill_players(max_players - len(cars))
-
+        cars, models, allsprites, scores = load_players(max_players)
         run_trial(cars, models, allsprites, scores)
         time.sleep(0.5)
 
@@ -128,11 +127,12 @@ def main():
 
 def fill_players(num, cars, models, sprites, scores):
     nc, nm, ns, nss = load_players(num)
-    cars.append(nc)
-    models.append(nm)
-    sprites.append(ns)
-    scores.append(nss)
+    cars.extend(nc)
+    models.extend(nm)
+    sprites.add(ns)
+    scores.extend(nss)
     return cars, models, sprites, scores
+
 
 def manual_mode(car):
     for event in pygame.event.get():
