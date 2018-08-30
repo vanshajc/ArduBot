@@ -18,7 +18,7 @@ class Car(pygame.sprite.Sprite):
         self.angular_velocity = 0.001
         self.auto = auto
 
-        self.pose = (100, 250)
+        self.pose = (95 + 10*np.random.random(), 250)
         self.rect.center = self.pose
 
         screen = pygame.display.get_surface()
@@ -28,6 +28,9 @@ class Car(pygame.sprite.Sprite):
         return np.expand_dims(np.asarray(Tile.get_neighbors(Tile.to_tile_number(self.pose[0], self.pose[1]))), axis=1)
 
     def update(self):
+
+        if Tile.collides(self.pose[0], self.pose[1]):
+            return
 
         move = (-1 * self.forward_velocity * math.sin(self.orientation),
                 self.forward_velocity * math.cos(self.orientation))

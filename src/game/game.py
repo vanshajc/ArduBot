@@ -14,6 +14,17 @@ myfont = pygame.font.SysFont("arial", 16)
 size = width, height = 640, 480
 
 
+def load_players(num_players):
+    cars = []
+    models = []
+    for i in range(num_players):
+        c = Car()
+        cars.append(c)
+        models.append(Model())
+    sprites = pygame.sprite.RenderPlain(cars)
+    return cars, models, sprites, [0 for _ in range(num_players)]
+
+
 def run_trial():
     np.random.seed()
     screen = pygame.display.set_mode((width, height))
@@ -32,9 +43,12 @@ def run_trial():
     Tile.pre_init(screen)
     Tile.load(obstacles())
 
-    car = Car()
-    model = Model()
-    allsprites = pygame.sprite.RenderPlain((car))
+    # car = Car()
+    # model = Model()
+    # allsprites = pygame.sprite.RenderPlain((car))
+
+    cars, models, allsprites, scores = load_players(10)
+
     clock = pygame.time.Clock()
 
     score = 0
@@ -42,12 +56,25 @@ def run_trial():
     while 1:
         clock.tick(60)
 
-        score = score + 1
-        if Tile.collides(car.pose[0], car.pose[1]):
-            break
+        blocked = True
 
-        move = model.get_action(car.get_state())
-        car.move(move)
+        for i in range(len(cars)):
+            car = cars[i]
+            if Tile.collides(car.pose[0], car.pose[1]):
+                continue
+            blocked = False
+            move = models[i].get_action(car.get_state())
+            car.move(move)
+
+        # score = score + 1
+        # if Tile.collides(car.pose[0], car.pose[1]):
+        #     break
+        #
+        # move = model.get_action(car.get_state())
+        # car.move(move)
+
+        if blocked:
+            return
 
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -62,12 +89,12 @@ def run_trial():
         # Draw Everything
         screen.blit(bg, (0, 0))
 
-        Tile.get_neighbors(Tile.to_tile_number(car.pose[0], car.pose[1]), screen)
+        # Tile.get_neighbors(Tile.to_tile_number(car.pose[0], car.pose[1]), screen)
 
-        score_text = myfont.render("Score {0}".format(score), 1, (255, 255, 255))
-        screen.blit(score_text, (5, 10))
+        # score_text = myfont.render("Score {0}".format(score), 1, (255, 255, 255))
+        # screen.blit(score_text, (5, 10))
         allsprites.draw(screen)
-        pygame.draw.rect(screen, (255, 0, 0), car.rect, 1)
+        # pygame.draw.rect(screen, (255, 0, 0), car.rect, 1)
         pygame.display.flip()
 
     print("Final Score: ", score)
