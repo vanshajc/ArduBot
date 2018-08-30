@@ -12,7 +12,7 @@ import json
 pygame.font.init()
 myfont = pygame.font.SysFont("arial", 16)
 size = width, height = 640, 480
-
+max_players = 10
 
 def load_players(num_players):
     cars = []
@@ -25,7 +25,7 @@ def load_players(num_players):
     return cars, models, sprites, [0 for _ in range(num_players)]
 
 
-def run_trial():
+def run_trial(cars, models, allsprites, scores):
     np.random.seed()
     screen = pygame.display.set_mode((width, height))
     pygame.display.set_caption('ArduBot: Development Stage')
@@ -46,8 +46,6 @@ def run_trial():
     # car = Car()
     # model = Model()
     # allsprites = pygame.sprite.RenderPlain((car))
-
-    cars, models, allsprites, scores = load_players(10)
 
     clock = pygame.time.Clock()
 
@@ -77,6 +75,7 @@ def run_trial():
             return
 
         for event in pygame.event.get():
+            print("is something happening?")
             if event.type == QUIT:
                 return
             elif event.type == KEYDOWN and event.key == K_ESCAPE:
@@ -88,13 +87,7 @@ def run_trial():
 
         # Draw Everything
         screen.blit(bg, (0, 0))
-
-        # Tile.get_neighbors(Tile.to_tile_number(car.pose[0], car.pose[1]), screen)
-
-        # score_text = myfont.render("Score {0}".format(score), 1, (255, 255, 255))
-        # screen.blit(score_text, (5, 10))
         allsprites.draw(screen)
-        # pygame.draw.rect(screen, (255, 0, 0), car.rect, 1)
         pygame.display.flip()
 
     print("Final Score: ", score)
@@ -110,12 +103,36 @@ def run_trial():
 
 
 def main():
+    # Init pygame
     pygame.init()
+
+    screen = pygame.display.set_mode((width, height))
+    pygame.display.set_caption('ArduBot: Development Stage')
+    pygame.mouse.set_visible(0)
+
+    # Load initial players
+    cars, models, allsprites, scores = [], [], [], []
+
+    # Run trials
     for i in range(0, 10):
-        run_trial()
+        # One trial run on a set of cars and their models
+        if len(cars) < max_players:
+            cars, models, allsprites, scores = fill_players(max_players - len(cars))
+
+        run_trial(cars, models, allsprites, scores)
         time.sleep(0.5)
+
+    # Exit
     pygame.quit()
 
+
+def fill_players(num, cars, models, sprites, scores):
+    nc, nm, ns, nss = load_players(num)
+    cars.append(nc)
+    models.append(nm)
+    sprites.append(ns)
+    scores.append(nss)
+    return cars, models, sprites, scores
 
 def manual_mode(car):
     for event in pygame.event.get():
