@@ -18,7 +18,7 @@ class Car(pygame.sprite.Sprite):
         self.angular_velocity = 0.001
         self.auto = auto
 
-        self.pose = (50 + 100*np.random.random(), 250)
+        self.pose = (100, 250)
         self.rect.center = self.pose
 
         screen = pygame.display.get_surface()

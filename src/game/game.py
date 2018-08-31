@@ -7,6 +7,7 @@ from car import Car
 from model import Model
 import time
 import numpy as np
+import random
 import json
 
 pygame.font.init()
@@ -14,7 +15,9 @@ myfont = pygame.font.SysFont("arial", 16)
 size = width, height = 640, 480
 
 # Number of cars to train at the same time
-max_players = 10
+max_players = 50
+mutation_rate = 0.3
+max_trials = 100
 
 
 def load_players(num_players):
@@ -25,7 +28,7 @@ def load_players(num_players):
         cars.append(c)
         models.append(Model())
     sprites = pygame.sprite.RenderPlain(cars)
-    return cars, models, sprites, [0 for _ in range(num_players)]
+    return cars, models, sprites, np.ones(num_players)
 
 
 def run_trial(cars, models, allsprites, scores):
@@ -46,13 +49,7 @@ def run_trial(cars, models, allsprites, scores):
     Tile.pre_init(screen)
     Tile.load(obstacles())
 
-    # car = Car()
-    # model = Model()
-    # allsprites = pygame.sprite.RenderPlain((car))
-
     clock = pygame.time.Clock()
-
-    score = 0
 
     while 1:
         clock.tick(60)
@@ -66,19 +63,12 @@ def run_trial(cars, models, allsprites, scores):
             blocked = False
             move = models[i].get_action(car.get_state())
             car.move(move)
-
-        # score = score + 1
-        # if Tile.collides(car.pose[0], car.pose[1]):
-        #     break
-        #
-        # move = model.get_action(car.get_state())
-        # car.move(move)
+            scores[i] += 1
 
         if blocked:
-            return
+            return scores
 
         for event in pygame.event.get():
-            print("is something happening?")
             if event.type == QUIT:
                 return
             elif event.type == KEYDOWN and event.key == K_ESCAPE:
@@ -93,16 +83,7 @@ def run_trial(cars, models, allsprites, scores):
         allsprites.draw(screen)
         pygame.display.flip()
 
-    print("Final Score: ", score)
-    data = [{"score": score,
-             "layer1": model.layer1.tolist(),
-             "layer2": model.layer2.tolist(),
-             "bias1": model.b1.tolist(),
-             "bias2": model.b2.tolist()
-             }]
-
-    with open('data.json', 'w') as f:
-        json.dump(data, f)
+    return scores
 
 
 def main():
@@ -113,16 +94,76 @@ def main():
     pygame.display.set_caption('ArduBot: Development Stage')
     pygame.mouse.set_visible(0)
 
+    cars, models, allsprites, scores = load_players(max_players)
 
     # Run trials
-    for i in range(0, 10):
+    for i in range(0, max_trials):
+        cars, _, allsprites, _ = load_players(max_players)
+        models = get_next_gen(models, scores)
         # One trial run on a set of cars and their models
-        cars, models, allsprites, scores = load_players(max_players)
-        run_trial(cars, models, allsprites, scores)
-        time.sleep(0.5)
+        scores = np.zeros(max_players)
+        scores = run_trial(cars, models, allsprites, scores)
+        time.sleep(0.2)
+        print("Generation:", i, "Score:", np.max(scores), "Average:", np.average(scores))
+        print(scores)
+        print("="*100)
+
+    print("Best score:", np.max(scores))
+
+    with open("data.json", "w") as f:
+        json.dump(models[np.argmax(scores)].getJSON(), f)
 
     # Exit
     pygame.quit()
+
+
+def get_next_gen(models, scores):
+    ind = np.argsort(scores)
+
+    # Take the 20% best players and add them in automatically.
+    best = int(max_players*0.2)
+    pM = []
+    pS = []
+    for i in ind[::-1][:best]:
+        pM.append(models[i])
+        pS.append(scores[i])
+
+    pM = np.asarray(pM)
+    pS = np.asarray(pS)
+    offsprings = crossover(pM, max_players - best, pS)
+
+    for off in offsprings:
+        if random.random() > mutation_rate:
+            off.mutate()
+
+    new_models = np.hstack((pM, offsprings))
+    return new_models
+
+
+def crossover(parents, offspring_size, scores):
+    offspring = []
+
+    for k in range(offspring_size):
+        parent1_idx = select_parent(scores)
+        parent2_idx = select_parent(scores)
+        # parent2_idx = (k + 1) % parents.shape[0]
+        m = Model.combine(parents[parent1_idx], parents[parent2_idx])
+
+        # m.layer1 = random.choice((parents[parent1_idx].layer1, parents[parent2_idx].layer1))
+        # m.layer2 = random.choice((parents[parent1_idx].layer2, parents[parent2_idx].layer2))
+
+        offspring.append(m)
+    return np.asarray(offspring)
+
+
+def select_parent(scores):
+    p_sum = np.random.randint(int(np.sum(scores)))
+
+    i = 0
+    while p_sum > 0:
+        p_sum -= scores[i]
+        i += 1
+    return i - 1
 
 
 def fill_players(num, cars, models, sprites, scores):
