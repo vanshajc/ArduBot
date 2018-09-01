@@ -1,9 +1,11 @@
 import numpy as np
 import random
+from car import Car
+
 
 class Model:
-    input_size = 25
-    layer1_size = 4
+    input_size = (Car.matrix_size*2 + 1)**2
+    layer1_size = 8
     layer2_size = 1
 
     def __init__(self):
@@ -63,3 +65,22 @@ class Model:
 
         return m
 
+    @staticmethod
+    def combine_random(m1, m2):
+        m = Model()
+
+        for i in range(m1.layer1.shape[0]):
+            for j in range(m1.layer1.shape[1]):
+                if np.random.rand() < 0.5:
+                    m.layer1[i, j] = m1.layer1[i, j]
+                else:
+                    m.layer1[i, j] = m2.layer1[i, j]
+
+        for i in range(m1.layer2.shape[0]):
+            for j in range(m1.layer2.shape[1]):
+                if np.random.rand() < 0.5:
+                    m.layer2[i, j] = m1.layer2[i, j]
+                else:
+                    m.layer2[i, j] = m2.layer2[i, j]
+
+        return m

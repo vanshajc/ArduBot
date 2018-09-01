@@ -15,8 +15,8 @@ myfont = pygame.font.SysFont("arial", 16)
 size = width, height = 640, 480
 
 # Number of cars to train at the same time
-max_players = 50
-mutation_rate = 0.3
+max_players = 25
+mutation_rate = 0.8
 max_trials = 100
 
 
@@ -31,7 +31,7 @@ def load_players(num_players):
     return cars, models, sprites, np.ones(num_players)
 
 
-def run_trial(cars, models, allsprites, scores):
+def run_trial(cars, models, allsprites, scores, display=True):
     np.random.seed()
     screen = pygame.display.set_mode((width, height))
     pygame.display.set_caption('ArduBot: Development Stage')
@@ -61,7 +61,7 @@ def run_trial(cars, models, allsprites, scores):
             if Tile.collides(car.pose[0], car.pose[1]):
                 continue
             blocked = False
-            move = models[i].get_action(car.get_state())
+            move = models[i].get_action(car.get_relative_state())
             car.move(move)
             scores[i] += 1
 
@@ -77,11 +77,11 @@ def run_trial(cars, models, allsprites, scores):
                 car.handle_key(event.key)
 
         allsprites.update()
-
         # Draw Everything
-        screen.blit(bg, (0, 0))
-        allsprites.draw(screen)
-        pygame.display.flip()
+        if display:
+            screen.blit(bg, (0, 0))
+            allsprites.draw(screen)
+            pygame.display.flip()
 
     return scores
 
@@ -92,7 +92,7 @@ def main():
 
     screen = pygame.display.set_mode((width, height))
     pygame.display.set_caption('ArduBot: Development Stage')
-    pygame.mouse.set_visible(0)
+    # pygame.mouse.set_visible(0)
 
     cars, models, allsprites, scores = load_players(max_players)
 
@@ -102,7 +102,7 @@ def main():
         models = get_next_gen(models, scores)
         # One trial run on a set of cars and their models
         scores = np.zeros(max_players)
-        scores = run_trial(cars, models, allsprites, scores)
+        scores = run_trial(cars, models, allsprites, scores, display=True)
         time.sleep(0.2)
         print("Generation:", i, "Score:", np.max(scores), "Average:", np.average(scores))
         print(scores)
@@ -147,7 +147,7 @@ def crossover(parents, offspring_size, scores):
         parent1_idx = select_parent(scores)
         parent2_idx = select_parent(scores)
         # parent2_idx = (k + 1) % parents.shape[0]
-        m = Model.combine(parents[parent1_idx], parents[parent2_idx])
+        m = Model.combine_random(parents[parent1_idx], parents[parent2_idx])
 
         # m.layer1 = random.choice((parents[parent1_idx].layer1, parents[parent2_idx].layer1))
         # m.layer2 = random.choice((parents[parent1_idx].layer2, parents[parent2_idx].layer2))

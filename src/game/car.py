@@ -7,6 +7,9 @@ import math
 
 
 class Car(pygame.sprite.Sprite):
+
+    matrix_size = 3
+
     """init car position, velocity, and image"""
     def __init__(self, auto=False):
         pygame.sprite.Sprite.__init__(self)  # call Sprite initializer
@@ -28,10 +31,6 @@ class Car(pygame.sprite.Sprite):
         return np.expand_dims(np.asarray(Tile.get_neighbors(Tile.to_tile_number(self.pose[0], self.pose[1]))), axis=1)
 
     def update(self):
-
-        if Tile.collides(self.pose[0], self.pose[1]):
-            return
-
         move = (-1 * self.forward_velocity * math.sin(self.orientation),
                 self.forward_velocity * math.cos(self.orientation))
 
@@ -43,8 +42,13 @@ class Car(pygame.sprite.Sprite):
             (new_pose[1] <= self.area.top or new_pose[1] >= self.area.bottom - 50):
             return
 
+        if Tile.collides(self.pose[0], self.pose[1]):
+            return -1
+
         self.pose = new_pose.center
         self.rect = new_pose
+
+
 
     def rotate(self, angle):
         center = self.rect.center
@@ -62,7 +66,19 @@ class Car(pygame.sprite.Sprite):
         if key == K_RIGHT:
             self.rotate(-1*math.pi/120)
 
+    def get_relative_state(self):
+        size = 2*Car.matrix_size + 1
+        grid = np.zeros((size, size))
+        c, s = float(np.cos(self.orientation)), float(np.sin(self.orientation))
+        R = np.array([[c, -s],
+                      [s, -c]])
+        for i in range(-1*Car.matrix_size, Car.matrix_size + 1):
+            for j in range(-1 * Car.matrix_size, Car.matrix_size + 1):
+                vec = (R.dot(np.asarray([i, j])))*Tile.size + np.asarray(self.pose)
+                grid[i, j] = Tile.get_type(Tile.to_tile_number(vec[0], vec[1]))
+        return np.expand_dims(grid.flatten(), axis=1)
+
     def move(self, m):
-        self.rotate(m * math.pi/90)
+        self.rotate(m * math.pi/60)
 
 
