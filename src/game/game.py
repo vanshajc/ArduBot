@@ -41,14 +41,14 @@ def main():
         cars, _, allsprites, _ = load_players(max_players)
         models = get_next_gen(models, scores)
         # One trial run on a set of cars and their models
-        # scores = np.zeros(max_players)
-        # scores = run_trial(cars, models, allsprites, scores, display=True)
-        # print("Generation:", i, "Score:", np.max(scores[0]), "Average:", np.average(scores[0]))
-        # print("Initialized: ", scores[1], scores[2])
-        # print("="*100)
-        manual_mode(cars, allsprites)
+        scores = np.zeros(max_players)
+        scores = run_trial(cars, models, allsprites, scores, display=True)
+        print("Generation:", i, "Score:", np.max(scores[0]), "Average:", np.average(scores[0]))
+        print("Initialized: ", scores[1], scores[2])
+        print("="*100)
+        # manual_mode(cars, allsprites)
 
-    # print("Best score:", np.max(scores))
+    print("Best score:", np.max(scores))
 
     with open("../../data/data.json", "w") as f:
         json.dump(models[np.argmax(scores)].getJSON(), f)

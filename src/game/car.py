@@ -66,14 +66,16 @@ class Car(pygame.sprite.Sprite):
             self.rotate(-1*math.pi/120)
 
     def get_relative_state(self):
-        size = 2*Car.matrix_size + 1
+        size = 2 * Car.matrix_size + 1
         grid = np.zeros((size, size))
-        c, s = float(np.cos(self.orientation)), float(np.sin(self.orientation))
+        c, s = float(np.cos(-1*self.orientation)), float(np.sin(-1*self.orientation))
         R = np.array([[c, -s],
-                      [s, -c]])
-        for i in range(-1*Car.matrix_size, Car.matrix_size + 1):
-            for j in range(-1 * Car.matrix_size, Car.matrix_size + 1):
-                vec = (R.dot(np.asarray([i, j])))*Tile.size + np.asarray(self.pose)
+                      [s, c]])
+        for i in range(0, Car.matrix_size*2 + 1):
+            for j in range(0, Car.matrix_size*2 + 1):
+                ip = i - Car.matrix_size
+                jp = j - Car.matrix_size
+                vec = (R.dot(np.asarray([jp, ip]))) * Tile.size + np.asarray(self.pose)
                 grid[i, j] = Tile.get_type(Tile.to_tile_number(vec[0], vec[1]))
         return np.expand_dims(grid.flatten(), axis=1)
 
@@ -83,26 +85,17 @@ class Car(pygame.sprite.Sprite):
     def get_list_debug(self, screen):
         size = 2 * Car.matrix_size + 1
         grid = np.zeros((size, size))
-        g2 = np.zeros((size, size))
         c, s = float(np.cos(-1*self.orientation)), float(np.sin(-1*self.orientation))
         R = np.array([[c, -s],
                       [s, c]])
         count = 0
-        print("-"*50)
         for i in range(0, Car.matrix_size*2 + 1):
             for j in range(0, Car.matrix_size*2 + 1):
                 ip = i - Car.matrix_size
                 jp = j - Car.matrix_size
                 vec = (R.dot(np.asarray([jp, ip]))) * Tile.size + np.asarray(self.pose)
-                print(vec)
                 grid[i, j] = Tile.get_type(Tile.to_tile_number(vec[0], vec[1]))
-                g2[j, i] = Tile.get_type(Tile.to_tile_number(self.pose[0] + ip*Tile.size, self.pose[1] + jp*Tile.size))
-                Tile.get_tile(Tile.to_tile_number(vec[0], vec[1]))\
-                    .draw_Q(screen, count)
                 count += 1
-
-        print(np.array2string(np.expand_dims(g2.flatten(), axis=1).flatten()),
-              np.array2string(np.expand_dims(grid.flatten(), axis=1).flatten()))
 
     def move(self, m):
         self.rotate(m * math.pi/120)
