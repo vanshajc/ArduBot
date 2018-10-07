@@ -4,12 +4,13 @@ import pygame
 from pygame.locals import *
 from tile import Tile
 from obstacle_map import *
+import time
 
 Q = {}
 
 count = 0
 learning_rate = 1
-discount_rate = 0.5
+discount_rate = 0.9
 possible_actions = [-1.5, 0, 1.5]
 
 
@@ -35,9 +36,11 @@ def get_best_action(state):
 
 def update_table(state, action, next_state, car):
     key = (state, action)
-    reward = -999 if Tile.collides(car.pose[0], car.pose[1]) else 1
-    Q[key] = Q[key] + learning_rate * (reward + discount_rate * (get_best_action(next_state)[1] - Q[key]))
-    # print("Update Q Table: ", key, Q[key])
+    reward = -9999 if Tile.collides(car.pose[0], car.pose[1]) else 1
+    print("Update Q Table: ", key, Q[key], get_best_action(next_state))
+    Q[key] = Q[key] + learning_rate * (reward + discount_rate * get_best_action(next_state)[1] - Q[key])
+    print("New Q Value:", key, Q[key])
+
 
 
 def run_trial(cars, models, allsprites, scores, display=True):
@@ -59,7 +62,7 @@ def run_trial(cars, models, allsprites, scores, display=True):
     Tile.load(obstacles())
 
     clock = pygame.time.Clock()
-
+    random_moves = 0
     while 1:
         clock.tick(60)
 
@@ -68,16 +71,18 @@ def run_trial(cars, models, allsprites, scores, display=True):
         states = []
         actions = []
 
-        random_moves = 0
         for i in range(len(cars)):
             car = cars[i]
 
-            state = car.get_relative_state().tostring()
+            state = car.get_list()
             action = get_best_action(state)[0]
             val = np.random.rand()
             if val < epsilon():
                 random_moves += 1
                 action = possible_actions[np.random.randint(0, high=len(possible_actions))]
+            else:
+                print("Choosing: ", car.pose, get_best_action(state), (-1.5, Q[(state, -1.5)]), (0, Q[(state, 0)]),
+                      (1.5, Q[(state, 1.5)]))
 
             global count
             count += 0.0001/max_players
@@ -110,7 +115,7 @@ def run_trial(cars, models, allsprites, scores, display=True):
 
         # Update q values
         for i in range(len(cars)):
-            update_table(states[i], actions[i], cars[i].get_relative_state().tostring(), cars[i])
+            update_table(states[i], actions[i], cars[i].get_list(), cars[i])
 
         # Draw Everything
         if display:
@@ -118,7 +123,7 @@ def run_trial(cars, models, allsprites, scores, display=True):
             allsprites.draw(screen)
             pygame.display.flip()
 
-    return scores
+    return scores, len(Q), random_moves
 
 
 def get_next_gen(models, scores):

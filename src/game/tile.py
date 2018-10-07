@@ -79,3 +79,10 @@ class Tile(pygame.Rect):
         # pygame.draw.rect(SCREEN, [200, 200, 200, 255], self)
         text_to_screen.draw_Text(SCREEN, "", self.x, self.y + 8)
 
+    def draw_Q(self, SCREEN, q):
+        if SCREEN is None:
+            return
+        pygame.draw.line(SCREEN, [255, 0, 0], [self.x, self.y], [self.x + self.size, self.y + self.size])
+        pygame.draw.line(SCREEN, [255, 0, 0], [self.x, self.y + self.size], [self.x + self.size, self.y])
+        pygame.draw.rect(SCREEN, [200, 200, 200, 255], self)
+        text_to_screen.draw_Text(SCREEN, q, self.x, self.y + 8)

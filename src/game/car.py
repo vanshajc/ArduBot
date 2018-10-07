@@ -77,6 +77,33 @@ class Car(pygame.sprite.Sprite):
                 grid[i, j] = Tile.get_type(Tile.to_tile_number(vec[0], vec[1]))
         return np.expand_dims(grid.flatten(), axis=1)
 
+    def get_list(self):
+        return np.array2string(self.get_relative_state().flatten())
+
+    def get_list_debug(self, screen):
+        size = 2 * Car.matrix_size + 1
+        grid = np.zeros((size, size))
+        g2 = np.zeros((size, size))
+        c, s = float(np.cos(self.orientation)), float(np.sin(self.orientation))
+        R = np.array([[c, -s],
+                      [s, c]])
+        count = 0
+        print("-"*50)
+        for i in range(0, Car.matrix_size*2 + 1):
+            for j in range(0, Car.matrix_size*2 + 1):
+                ip = i - Car.matrix_size
+                jp = j - Car.matrix_size
+                print(R.dot(np.asarray([ip, jp])) * Tile.size)
+                vec = (R.dot(np.asarray([jp, ip]))) * Tile.size + np.asarray(self.pose)
+                grid[j, i] = Tile.get_type(Tile.to_tile_number(vec[0], vec[1]))
+                g2[j, i] = Tile.get_type(Tile.to_tile_number(self.pose[0] + ip*Tile.size, self.pose[1] + jp*Tile.size))
+                # Tile.get_tile(Tile.to_tile_number(self.pose[0] + ip*Tile.size, self.pose[1] + jp*Tile.size))\
+                #     .draw_Q(screen, count)
+                count += 1
+
+        print(np.array2string(np.expand_dims(g2.flatten(), axis=1).flatten()),
+              np.array2string(np.expand_dims(grid.flatten(), axis=1).flatten()))
+
     def move(self, m):
         self.rotate(m * math.pi/120)
 
