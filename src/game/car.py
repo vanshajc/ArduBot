@@ -93,7 +93,7 @@ class Car(pygame.sprite.Sprite):
             for j in range(0, Car.matrix_size*2 + 1):
                 ip = i - Car.matrix_size
                 jp = j - Car.matrix_size
-                print(R.dot(np.asarray([ip, jp])) * Tile.size)
+                print(R.dot(np.asarray([jp, ip])) * Tile.size)
                 vec = (R.dot(np.asarray([jp, ip]))) * Tile.size + np.asarray(self.pose)
                 grid[j, i] = Tile.get_type(Tile.to_tile_number(vec[0], vec[1]))
                 g2[j, i] = Tile.get_type(Tile.to_tile_number(self.pose[0] + ip*Tile.size, self.pose[1] + jp*Tile.size))
