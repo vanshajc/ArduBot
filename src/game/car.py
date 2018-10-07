@@ -4,11 +4,12 @@ from util import *
 from tile import Tile
 import numpy as np
 import math
+from settings import SENSOR_RANGE
 
 
 class Car(pygame.sprite.Sprite):
 
-    matrix_size = 3
+    matrix_size = SENSOR_RANGE
 
     """init car position, velocity, and image"""
     def __init__(self, auto=False):
@@ -21,7 +22,7 @@ class Car(pygame.sprite.Sprite):
         self.angular_velocity = 0.001
         self.auto = auto
 
-        self.pose = (100, 250)
+        self.pose = (50 + np.random.rand()*100, 250)
         self.rect.center = self.pose
 
         screen = pygame.display.get_surface()
@@ -47,8 +48,6 @@ class Car(pygame.sprite.Sprite):
 
         self.pose = new_pose.center
         self.rect = new_pose
-
-
 
     def rotate(self, angle):
         center = self.rect.center
@@ -79,6 +78,6 @@ class Car(pygame.sprite.Sprite):
         return np.expand_dims(grid.flatten(), axis=1)
 
     def move(self, m):
-        self.rotate(m * math.pi/60)
+        self.rotate(m * math.pi/120)
 
 

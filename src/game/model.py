@@ -1,5 +1,4 @@
 import numpy as np
-import random
 from car import Car
 
 
@@ -9,10 +8,20 @@ class Model:
     layer2_size = 1
 
     def __init__(self):
-        self.layer1 = 2 * np.random.rand(Model.input_size, Model.layer1_size) - 1
-        self.layer2 = 2 * np.random.rand(Model.layer1_size, Model.layer2_size) - 1
-        self.b1 = 2 * np.random.rand(1, Model.layer1_size) - 1
-        self.b2 = 2 * np.random.rand(1, Model.layer2_size) - 1
+        self.layer1 = 2 * np.random.rand(Model.layer1_size, Model.input_size) - 1
+        self.layer2 = 2 * np.random.rand(Model.layer2_size, Model.layer1_size) - 1
+        self.b1 = 2 * np.random.rand(Model.layer1_size, 1) - 1
+        self.b2 = 2 * np.random.rand(Model.layer2_size, 1) - 1
+
+    @staticmethod
+    def get_model(l1, b1, l2, b2):
+        m = Model()
+        m.layer1 = l1
+        m.layer2 = l2
+        m.b1 = b1
+        m.b2 = b2
+
+        return m
 
     @staticmethod
     def from_weights(layer1, layer2):
@@ -22,8 +31,8 @@ class Model:
         return m
 
     def get_action(self, state):
-        z1 = Model.activation(state.T.dot(self.layer1) + self.b1)
-        z2 = Model.activation(z1.dot(self.layer2) + self.b2)
+        z1 = Model.activation(self.layer1.dot(state) + self.b1)
+        z2 = Model.activation(self.layer2.dot(z1) + self.b2)
         return z2
 
     def get_weights(self):
@@ -31,17 +40,17 @@ class Model:
 
     def getJSON(self):
         return {
-            "layer1": self.layer1.toList(),
-            "layer2": self.layer2.toList(),
-            "bias1": self.b1.toList(),
-            "bias2": self.b2.toList()
+            "layer1": self.layer1.tolist(),
+            "layer2": self.layer2.tolist(),
+            "bias1": self.b1.tolist(),
+            "bias2": self.b2.tolist()
         }
 
     def mutate(self):
         if np.random.rand() < 0.5:
-            self.layer1 = 2 * np.random.rand(Model.input_size, Model.layer1_size) - 1
+            self.layer1 = 2 * np.random.rand(Model.layer1_size, Model.input_size) - 1
         else:
-            self.layer2 = 2 * np.random.rand(Model.layer1_size, Model.layer2_size) - 1
+            self.layer2 = 2 * np.random.rand(Model.layer2_size, Model.layer1_size) - 1
 
     @staticmethod
     def activation(x):
@@ -82,5 +91,15 @@ class Model:
                     m.layer2[i, j] = m1.layer2[i, j]
                 else:
                     m.layer2[i, j] = m2.layer2[i, j]
+
+        return m
+
+    @staticmethod
+    def combine_average(m1, m2):
+        m = Model()
+
+        m.layer1 = (m1.layer1 + m2.layer1)/2
+
+        m.layer2 = (m1.layer2 + m2.layer2)/2
 
         return m
